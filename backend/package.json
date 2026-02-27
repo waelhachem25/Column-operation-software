@@ -1,0 +1,43 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
+  },
+  "prompt": "Fill the empty boxes",
+  "operation": "*",
+  "operand1": 123,
+  "operand2": 45,
+  "missing": [
+    {
+      "row": "result",
+      "indexFromRight": 0
+    }
+  ],
+  "override": {
+    "correctAnswer": "5535",
+    "steps": [
+      "...",
+      "..."
+    ]
+  }
+}
