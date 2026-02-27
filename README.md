@@ -102,23 +102,18 @@ Legacy compatibility endpoint:
 - `POST /api/math/template`
 
 ## Example Payload (Create Template)
+## Screenshots
 
-```json
-{
-  "prompt": "Fill in the missing number:",
-  "operation": "*",
-  "operand1": 12,
-  "operand2": 34,
-  "missing": [
-    { "row": "top", "indexFromRight": 1 },
-    { "row": "result", "indexFromRight": 2 }
-  ],
-  "override": {
-    "result": "408",
-    "steps": ["12 x 4 = 48", "12 x 30 = 360", "360 + 48 = 408"]
-  }
-}
-```
+### Home Page
+![Home Page](screenshots/home.png)
+
+### Operation Form
+![Operation Form](screenshots/operation-form.png)
+
+### Results
+![Results](screenshots/results.png)
+![Results](screenshots/results2.png)
+
 
 ## Running Tests
 
