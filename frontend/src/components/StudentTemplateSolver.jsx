@@ -18,76 +18,6 @@ function sortCells(a, b) {
   return b.indexFromRight - a.indexFromRight;
 }
 
-function getRowValue(template, cell) {
-  if (cell.row === "top") return template.top;
-  if (cell.row === "bottom") return template.bottom;
-  if (cell.row === "result") return template.result;
-  return template.partials[cell.partialIndex];
-}
-
-function setRowValue(template, cell, rowValue) {
-  if (cell.row === "top") {
-    template.top = rowValue;
-    return;
-  }
-  if (cell.row === "bottom") {
-    template.bottom = rowValue;
-    return;
-  }
-  if (cell.row === "result") {
-    template.result = rowValue;
-    return;
-  }
-  template.partials[cell.partialIndex] = rowValue;
-}
-
-function replaceCharAt(str, index, char) {
-  return str.substring(0, index) + char + str.substring(index + 1);
-}
-
-function applyInputs(template, cells, inputs) {
-  const result = {
-    ...template,
-    partials: [...(template.partials || [])],
-    missing: [...(template.missing || [])]
-  };
-
-  for (const cell of cells) {
-    const value = inputs[cellKey(cell)];
-    if (!value) continue;
-
-    const rowValue = getRowValue(result, cell);
-    const index = rowValue.length - 1 - cell.indexFromRight;
-    if (index < 0 || index >= rowValue.length) continue;
-    setRowValue(result, cell, replaceCharAt(rowValue, index, value));
-  }
-
-  return result;
-}
-
-function groupLabel(cell) {
-  if (cell.row === "top") return "Top row";
-  if (cell.row === "bottom") return "Bottom row";
-  if (cell.row === "result") return "Result row";
-  return `Partial row ${cell.partialIndex + 1}`;
-}
-
-function groupMissingCells(cells) {
-  const groups = new Map();
-
-  for (const cell of cells) {
-    const key = cell.row === "partial" ? `partial:${cell.partialIndex}` : cell.row;
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(cell);
-  }
-
-  return [...groups.entries()].map(([key, groupCells]) => ({
-    key,
-    label: groupLabel(groupCells[0]),
-    cells: groupCells.sort(sortCells)
-  }));
-}
-
 export default function StudentTemplateSolver({ templateId, template }) {
   const [inputs, setInputs] = useState({});
   const [loading, setLoading] = useState(false);
@@ -97,12 +27,6 @@ export default function StudentTemplateSolver({ templateId, template }) {
   const missingCells = useMemo(
     () => [...(template?.missing || [])].sort(sortCells),
     [template]
-  );
-  const groupedMissing = useMemo(() => groupMissingCells(missingCells), [missingCells]);
-
-  const studentTemplate = useMemo(
-    () => applyInputs(template, missingCells, inputs),
-    [template, missingCells, inputs]
   );
 
   const onChange = (cell, rawValue) => {
@@ -158,28 +82,12 @@ export default function StudentTemplateSolver({ templateId, template }) {
       <span className="soft-chip">Student Worksheet</span>
       <h3 style={{ margin: "10px 0 12px" }}>{template.prompt || "Fill in the missing number:"}</h3>
 
-      <ColumnWorksheet template={studentTemplate} />
-
-      <div className="answer-groups">
-        {groupedMissing.map((group) => (
-          <div key={group.key} className="answer-group">
-            <div className="answer-label">{group.label}</div>
-            <div className="answer-strip">
-              {group.cells.map((cell) => (
-                <label key={cellKey(cell)} className="answer-slot">
-                  <input
-                    value={inputs[cellKey(cell)] ?? ""}
-                    onChange={(e) => onChange(cell, e.target.value)}
-                    inputMode="text"
-                    maxLength={1}
-                    aria-label={`${group.label} box ${cell.indexFromRight + 1} from right`}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      <ColumnWorksheet
+        template={template}
+        editableCells={missingCells}
+        cellInputs={inputs}
+        onCellInputChange={onChange}
+      />
 
       <div className="inline-actions">
         <button className="btn btn-primary" onClick={submit} disabled={loading}>
