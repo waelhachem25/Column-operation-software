@@ -104,6 +104,24 @@ function rowTitle(cell) {
   return `Partial row ${cell.partialIndex + 1}`;
 }
 
+function placeValueLabel(indexFromRight) {
+  const labels = [
+    "unit",
+    "tens",
+    "hundreds",
+    "thousands",
+    "ten-thousands",
+    "hundred-thousands",
+    "millions",
+    "ten-millions",
+    "hundred-millions",
+    "billions",
+    "ten-billions",
+    "hundred-billions"
+  ];
+  return labels[indexFromRight] || `10^${indexFromRight} place`;
+}
+
 function RowSelector({ template, cells, selectedSet, toggleCell }) {
   if (!cells.length) return null;
   const sample = cells[0];
@@ -123,7 +141,7 @@ function RowSelector({ template, cells, selectedSet, toggleCell }) {
                 checked={selectedSet.has(key)}
                 onChange={() => toggleCell(cell)}
               />
-              <span>#{cell.indexFromRight + 1} from right</span>
+              <span>{placeValueLabel(cell.indexFromRight)}</span>
             </label>
           );
         })}
